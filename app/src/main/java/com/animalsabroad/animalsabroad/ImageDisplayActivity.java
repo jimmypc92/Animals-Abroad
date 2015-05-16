@@ -8,12 +8,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.net.Uri;
+import android.view.SurfaceView;
 import android.widget.ImageView;
 
 
 public class ImageDisplayActivity extends Activity {
 
-    private ImageView imageDisplayer;
+    private CustomDrawableView imageDisplayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +24,16 @@ public class ImageDisplayActivity extends Activity {
         Intent intent = getIntent();
         Uri path = intent.getData();
 
-        imageDisplayer = (ImageView)findViewById(R.id.imageDisplayer);
-        imageDisplayer.setImageURI(path);
+        imageDisplayer = (CustomDrawableView)findViewById(R.id.imageDisplayer);
+        //If your using imageview rather than surface view you just set the
+        //Uri of the image.
+        //imageDisplayer.setImageURI(path);
+        try {
+            imageDisplayer.updateViewWithUri(path, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        imageDisplayer.updateWithAccent();
     }
 
     @Override

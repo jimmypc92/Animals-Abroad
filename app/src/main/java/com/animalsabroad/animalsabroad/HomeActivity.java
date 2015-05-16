@@ -83,7 +83,12 @@ public class HomeActivity extends Activity {
                         PictureUtils.JPGtoPNGFormatCopy(fileUri,this);
                     }
                     catch(Exception e){
-
+                        e.printStackTrace();
+                    }
+                    try {
+                        PictureUtils.rotateBitmap(fileUri, this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
                     Intent intent = new Intent(this, ImageDisplayActivity.class);
