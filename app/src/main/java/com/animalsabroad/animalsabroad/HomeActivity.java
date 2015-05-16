@@ -2,6 +2,7 @@ package com.animalsabroad.animalsabroad;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Picture;
 import android.net.Uri;
 import android.os.Environment;
@@ -22,15 +23,19 @@ import java.util.Date;
 
 public class HomeActivity extends Activity {
 
+    private SharedPreferences mPrefs;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
+    public static final String uriTag = "fileUri";
     private Uri fileUri;
     Button pictureButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPrefs = getApplicationContext().getSharedPreferences("default",MODE_WORLD_READABLE);
+
         setContentView(R.layout.activity_home);
         pictureButton = (Button)findViewById(R.id.pictureButton);
 
@@ -76,20 +81,15 @@ public class HomeActivity extends Activity {
                     the intent and that way we can access the picture.
                     */
 
-                    // Image captured and saved to fileUri specified in the Intent
-                    Toast.makeText(this, "Image saved to:\n" + fileUri, Toast.LENGTH_LONG).show();
-
-                    try{
-                        PictureUtils.JPGtoPNGFormatCopy(fileUri,this);
-                    }
-                    catch(Exception e){
-                        e.printStackTrace();
-                    }
+                    fileUri = Uri.parse(mPrefs.getString(uriTag,null));
                     try {
                         PictureUtils.rotateBitmap(fileUri, this);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    // Image captured and saved to fileUri specified in the Intent
+                    Log.d("MyCameraApp", "Image saved to: "+fileUri.getPath());
 
                     Intent intent = new Intent(this, ImageDisplayActivity.class);
                     intent.setData(fileUri);
@@ -110,6 +110,8 @@ public class HomeActivity extends Activity {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                 fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
+                Log.d("MyCameraApp","fileUri path: "+ fileUri.getPath());
+                mPrefs.edit().putString(uriTag,fileUri.toString()).commit();
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
                 startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
