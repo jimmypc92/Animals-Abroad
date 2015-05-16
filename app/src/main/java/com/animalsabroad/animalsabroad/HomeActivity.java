@@ -89,6 +89,7 @@ public class HomeActivity extends Activity {
                     }
 
                     // Image captured and saved to fileUri specified in the Intent
+                    //Toast.makeText(this, "Image saved to:\n" + fileUri, Toast.LENGTH_LONG).show();
                     Log.d("MyCameraApp", "Image saved to: "+fileUri.getPath());
 
                     Intent intent = new Intent(this, ImageDisplayActivity.class);
